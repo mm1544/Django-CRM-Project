@@ -27,11 +27,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# Default place where to be redirected
+# (!!!) Default place where to be redirected (!!!)
 LOGIN_REDIRECT_URL = '/dashboard/'
-# If we go to 'dashboard' without firs logging in then we need to be redirected here:
-LOGIN_URL = 'login'
-LOGOUT_REDIRECT_URL = 'index'
+# If we go to 'dashboard' without first logging-in, then we need to be redirected here:
+LOGIN_URL = 'login' # 'login' is url Name
+LOGOUT_REDIRECT_URL = 'index' # 'index' is url Name
 
 # Application definition
 
@@ -42,11 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Added manually
+    'client',
     'core',
     'dashboard',
     'lead',
-    'userprofile'
+    'userprofile',
 ]
 
 MIDDLEWARE = [

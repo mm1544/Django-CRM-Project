@@ -2,7 +2,5 @@ from django.contrib.auth.models import User
 from django.db import models
 
 class Userprofile(models.Model):
-    # One user should have one userprofile and one userprofile should have one user.
-    user = models.OneToOneField(User, related_name='userprofile',
-                                # Userprofile is deleted when User gets deleted
-                                on_delete=models.CASCADE)
+    # ONE user should have ONE userprofile and ONE userprofile should have ONE user.
+    user = models.OneToOneField(User, related_name='userprofile', on_delete=models.CASCADE)
