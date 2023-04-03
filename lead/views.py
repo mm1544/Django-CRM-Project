@@ -7,6 +7,7 @@ from .forms import AddLeadForm
 from .models import Lead
 
 from client.models import Client
+from team.models import Team
 
 @login_required
 def leads_list(request):
@@ -61,15 +62,18 @@ def leads_edit(request, pk):
 
 @login_required # To require authentication
 def add_lead(request):
+    team = Team.objects.filter(created_by=request.user)[0]
     if request.method == 'POST':
         form = AddLeadForm(request.POST)
 
         if form.is_valid():
+            team = Team.objects.filter(created_by=request.user)[0]
             # Creating new Lead
             # 'created_by' is not set yet, therefore we would get an error, therefore we need to pass 'ommit=False' - will prevent entry to be saved into database.
             lead = form.save(commit=False)
             # Logged-in user will be the person who creted this Lead.
             lead.created_by = request.user
+            lead.team = team
             lead.save()
 
             messages.success(request, 'The lead was created.')
@@ -83,17 +87,22 @@ def add_lead(request):
         form = AddLeadForm()
 
     # If 'form.is_valid()' is not valid, then errors will be added to the Form, and Dj will show the error messages.
-    return render(request, 'lead/add_lead.html', {'form': form})
+    return render(request, 'lead/add_lead.html', {
+        'form': form,
+        'team': team,
+        })
 
 @login_required
 def convert_to_client(request, pk):
     lead = get_object_or_404(Lead, created_by=request.user, pk=pk)
+    team = Team.objects.filter(created_by=request.user)[0]
 
     client = Client.objects.create(
         name=lead.name,
         email=lead.email,
         description=lead.description,
         created_by=request.user,
+        team=team,
         )
     
     lead.converted_to_client = True
