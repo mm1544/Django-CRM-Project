@@ -36,7 +36,7 @@ def clients_add(request):
 
             messages.success(request, 'The client was created.')
 
-            return redirect('clients_list') 
+            return redirect('clients:list') 
 
     else:
  
@@ -54,7 +54,7 @@ def clients_delete(request, pk):
 
     messages.success(request, 'The client "{}" was deleted.'.format(client.name))
 
-    return redirect('clients_list')
+    return redirect('clients:list')
 
 @login_required
 def clients_edit(request, pk):
@@ -69,7 +69,7 @@ def clients_edit(request, pk):
 
             messages.success(request, 'The changes were saved.')
 
-            return redirect('clients_list')
+            return redirect('clients:list')
         
         
     else:

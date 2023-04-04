@@ -19,7 +19,7 @@ def edit_team(request, pk):
             messages.success(request, 'The changes were saved.')
 
             # Return/redirect user back to 'myaccount' page.
-            return redirect('myaccount')
+            return redirect('userprofile:myaccount')
     else:
         form = TeamForm(instance=team) # To pull out the data of certain team into the form we need to pass-in 'instance=team'
 

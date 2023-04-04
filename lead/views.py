@@ -38,7 +38,7 @@ def leads_delete(request, pk):
 
     messages.success(request, 'The lead "{}" was deleted.'.format(lead.name))
 
-    return redirect('leads_list')
+    return redirect('leads:list')
 
 @login_required
 def leads_edit(request, pk):
@@ -53,7 +53,7 @@ def leads_edit(request, pk):
 
             messages.success(request, 'The changes were saved.')
 
-            return redirect('leads_list')
+            return redirect('leads:list')
         
     else:
         form = AddLeadForm(instance=lead)
@@ -79,7 +79,7 @@ def add_lead(request):
             messages.success(request, 'The lead was created.')
 
             # After Lead creation we want to redirect user to Leads page where all the leads are listed.
-            return redirect('leads_list') # Passing-in URL Name and DJ will take care of it.
+            return redirect('leads:list') # Passing-in URL Name and DJ will take care of it.
 
     else:
         # It it is not a POST request, we will have an empty form.
@@ -110,4 +110,4 @@ def convert_to_client(request, pk):
 
     messages.success(request, 'The lead "{}" was converted to a client.'.format(lead.name))
     
-    return redirect('leads_list')
+    return redirect('leads:list')
