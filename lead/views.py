@@ -9,10 +9,10 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView
 from django.views import View
 
-from .forms import AddLeadForm
+from .forms import AddLeadForm, AddCommentForm
 from .models import Lead
 
-from client.models import Client
+from client.models import Client, Comment as ClientComment
 from team.models import Team
 
 ## Custom Class based View (converted from function based view 'leads_list')
@@ -49,10 +49,18 @@ class LeadDetailView(DetailView):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
+    # Adding extra form to the DetailView
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = AddCommentForm()
+
+        return context
+    
     def get_queryset(self):
         queryset = super(LeadDetailView, self).get_queryset()
 
         return queryset.filter(created_by=self.request.user, pk=self.kwargs.get('pk'))
+    
 
 ### Func based view
 # @login_required
@@ -211,6 +219,27 @@ class LeadCreateView(CreateView):
 #         })
 
 
+class AddCommentView(View):
+    def post(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        content = request.POST.get('content')
+
+        form = AddCommentForm(request.POST)
+
+        if form.is_valid():
+            team = Team.objects.filter(created_by=self.request.user)[0]
+            # 'commit=False' because need to set a Team
+            comment = form.save(commit=False)
+            comment.team = team
+            comment.created_by = request.user
+            # lead_id ?
+            comment.lead_id = pk
+            comment.save()
+
+
+
+        return redirect('leads:detail', pk=pk)
+
 
 ### Class based view
 class ConvertToClientView(View):
@@ -232,28 +261,40 @@ class ConvertToClientView(View):
         lead.converted_to_client = True
         lead.save()
 
+        # Will convert all existing Lead Comments to the newly creted Client Comments
+        comments = lead.comments.all()
+
+        for comment in comments:
+            ClientComment.objects.create(
+                client = client,
+                content = comment.content,
+                created_by = comment.created_by,
+                team = team,
+                # created_at = comment.created_at,
+            )
+
         messages.success(request, 'The lead "{}" was converted to a client.'.format(lead.name))
     
         return redirect('leads:list')
 
 
-### Func based view
-@login_required
-def convert_to_client(request, pk):
-    lead = get_object_or_404(Lead, created_by=request.user, pk=pk)
-    team = Team.objects.filter(created_by=request.user)[0]
+# ### Func based view
+# @login_required
+# def convert_to_client(request, pk):
+#     lead = get_object_or_404(Lead, created_by=request.user, pk=pk)
+#     team = Team.objects.filter(created_by=request.user)[0]
 
-    client = Client.objects.create(
-        name=lead.name,
-        email=lead.email,
-        description=lead.description,
-        created_by=request.user,
-        team=team,
-        )
+#     client = Client.objects.create(
+#         name=lead.name,
+#         email=lead.email,
+#         description=lead.description,
+#         created_by=request.user,
+#         team=team,
+#         )
     
-    lead.converted_to_client = True
-    lead.save()
+#     lead.converted_to_client = True
+#     lead.save()
 
-    messages.success(request, 'The lead "{}" was converted to a client.'.format(lead.name))
+#     messages.success(request, 'The lead "{}" was converted to a client.'.format(lead.name))
     
-    return redirect('leads:list')
+#     return redirect('leads:list')

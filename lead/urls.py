@@ -29,8 +29,11 @@ urlpatterns = [
     # For Func based view
     # path('<int:pk>/convert/', views.convert_to_client, name='convert'),
 
-    # For Func based view
-    path('add/', views.LeadCreateView.as_view(), name='add'),
+    path('<int:pk>/add-comment/', views.AddCommentView.as_view(), name='add_comment'),
+
+
     # For Class based view
+    path('add/', views.LeadCreateView.as_view(), name='add'),
+    # For Func based view
     # path('add-lead/', views.add_lead, name='add_lead'),
 ]

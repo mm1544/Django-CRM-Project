@@ -40,3 +40,16 @@ class Lead(models.Model):
     # Will show a Lead name on Admin dashboard
     def __str__(self):
         return self.name
+    
+
+class Comment(models.Model):
+    team = models.ForeignKey(Team, related_name='lead_comments', on_delete=models.CASCADE)
+    # When Lead is deleted, then the Comment is deleted as well(?) --> 'on_delete=models.CASCADE'
+    lead = models.ForeignKey(Lead, related_name='comments', on_delete=models.CASCADE)
+    content = models.TextField(blank=True, null=True)
+    created_by = models.ForeignKey(User, related_name='lead_comments', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # Will show a Lead name on Admin dashboard
+    def __str__(self):
+        return self.created_by.username
