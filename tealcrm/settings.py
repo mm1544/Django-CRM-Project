@@ -73,8 +73,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # Adding a custom context processor. Now I am able to use 'team' in each template
-                'team.context_processors.team',
+                # Adding a custom context processor. Now I am able to use 'active_team' in each template
+                'team.context_processors.active_team',
             ],
         },
     },
