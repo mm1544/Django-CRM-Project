@@ -2,7 +2,7 @@
 
 # To be able to show message when e.g. lead is deleted
 from django.contrib import messages
-# For authentication
+# For authentication (it is used in Class based views instead of 'dispatch')
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
