@@ -2,6 +2,8 @@
 
 # To be able to show message when e.g. lead is deleted
 from django.contrib import messages
+# For authentication
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.shortcuts import render, redirect, get_object_or_404
@@ -16,13 +18,15 @@ from client.models import Client, Comment as ClientComment
 from team.models import Team
 
 ## Custom Class based View (converted from function based view 'leads_list')
-class LeadListView(ListView):
+class LeadListView(LoginRequiredMixin, ListView):
     model = Lead
 
-    # Needed for authentication
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+    ########### It is not needed becuase instead we use LoginRequiredMixin
+    # # Needed for authentication
+    # @method_decorator(login_required)
+    # def dispatch(self, *args, **kwargs):
+    #     return super().dispatch(*args, **kwargs)
+    ###########
 
     def get_queryset(self):
         queryset = super(LeadListView, self).get_queryset()
@@ -42,12 +46,12 @@ class LeadListView(ListView):
 
 
 ### Class based view
-class LeadDetailView(DetailView):
+class LeadDetailView(LoginRequiredMixin, DetailView):
     model = Lead
 
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+    # @method_decorator(login_required)
+    # def dispatch(self, *args, **kwargs):
+    #     return super().dispatch(*args, **kwargs)
 
     # Adding extra form to the DetailView
     def get_context_data(self, **kwargs):
@@ -79,13 +83,13 @@ class LeadDetailView(DetailView):
 
 
 ### Class based view
-class LeadDeleteView(DeleteView):
+class LeadDeleteView(LoginRequiredMixin, DeleteView):
     model = Lead
     success_url = reverse_lazy('leads:list')
 
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+    # @method_decorator(login_required)
+    # def dispatch(self, *args, **kwargs):
+    #     return super().dispatch(*args, **kwargs)
     
     # We want to be able to delte leads created only by the logged in user.
     def get_queryset(self):
@@ -109,14 +113,14 @@ class LeadDeleteView(DeleteView):
 
 
 ### Class based view
-class LeadUpdateView(UpdateView):
+class LeadUpdateView(LoginRequiredMixin, UpdateView):
     model = Lead
     fields = ('name', 'email', 'description', 'priority', 'status',)
     success_url = reverse_lazy('leads:list')
 
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+    # @method_decorator(login_required)
+    # def dispatch(self, *args, **kwargs):
+    #     return super().dispatch(*args, **kwargs)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -154,14 +158,14 @@ class LeadUpdateView(UpdateView):
 
 
 ### Class based view
-class LeadCreateView(CreateView):
+class LeadCreateView(LoginRequiredMixin, CreateView):
     model = Lead
     fields = ('name', 'email', 'description', 'priority', 'status',)
     success_url = reverse_lazy('leads:list')
 
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+    # @method_decorator(login_required)
+    # def dispatch(self, *args, **kwargs):
+    #     return super().dispatch(*args, **kwargs)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -220,7 +224,7 @@ class LeadCreateView(CreateView):
 #         })
 
 
-class AddFileView(View):
+class AddFileView(LoginRequiredMixin, View):
     # Because it will be a post request
     def post(self, request, *args, **kwargs):
         # Primary key
@@ -241,7 +245,7 @@ class AddFileView(View):
 
 
 
-class AddCommentView(View):
+class AddCommentView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         pk = kwargs.get('pk')
         content = request.POST.get('content')
@@ -263,7 +267,7 @@ class AddCommentView(View):
 
 
 ### Class based view
-class ConvertToClientView(View):
+class ConvertToClientView(LoginRequiredMixin, View):
     # Overwriting method
     def get(self, request, *args, **kwargs):
         pk = self.kwargs.get('pk')
