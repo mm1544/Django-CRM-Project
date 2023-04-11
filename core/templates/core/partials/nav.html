@@ -4,7 +4,9 @@
     <div class="space-x-4">
         <a href="{% url 'about' %}" class="text-white">About</a>
         {% comment %} 'active_team' is pulled from 'team > context_processors.py' and 'settings.py > TEMPLATES'{% endcomment %}
-        <a href="{% url 'team:detail' active_team.id %}" class="text-white">{{ active_team.name }}</a>
+        {% if active_team.id %}
+            <a href="{% url 'team:detail' active_team.id %}" class="text-white">{{ active_team.name }}</a>
+        {% endif %}
         {% comment %} 'is_authenticated' - is a property on the User. {% endcomment %}
         {% if request.user.is_authenticated %}
             <a href="{% url 'dashboard:index' %}" class="py-4 px-6 bg-teal-600 rounded-xl text-white">Dashboard</a>
