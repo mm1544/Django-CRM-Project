@@ -14,8 +14,8 @@ class Plan(models.Model):
         return self.name
 
 class Team(models.Model):
-    # ConnectingPlan and Team models
-    plan = models.ForeignKey(Plan, related_name='teams', on_delete=models.CASCADE)
+    # Connecting Plan and Team models
+    plan = models.ForeignKey(Plan, related_name='teams', blank=True, null=True, on_delete=models.CASCADE) # 'blank=True, null=True,' is needed so that we could create a Team without the initial plan. Without it the program will crash.
     name = models.CharField(max_length=100)
     # To reference all the members of a Team. Will use here many2many field.
     members = models.ManyToManyField(User, related_name='teams')
